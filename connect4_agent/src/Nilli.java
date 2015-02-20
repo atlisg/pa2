@@ -40,6 +40,7 @@ public class Nilli implements Agent
 		}
 		myTurn = !myTurn;
 		// TODO: 2. run alpha-beta search to determine the best move
+		
 		if (myTurn) {
 			if (lastDrop == 0) move = 4;
 			else move = currentState.evaluate(role);
@@ -50,43 +51,47 @@ public class Nilli implements Agent
 
 	}
 		
-	public int maxValue(State state)
+	static public int maxValue(State state, boolean thisRole, int depth)
 	{
-		if (state.isTerminal()) return state.heuristics(role);
+		System.out.println("\t\t\t" + depth);
+		if (state.isTerminal() > 0) {System.out.println("terminal");return state.heuristics();}
 		int v = Integer.MIN_VALUE;
 		for (int i = 0; i < 7; i++)
 		{
 			if (state.isValid(i))
 			{
-				v = Math.max(v, minValue(state.nextState(i, role == "white")));
+				v = Math.max(v, minValue(state.nextState(i, thisRole), !thisRole, depth + 1));
 			}
 		}
 		return v;
 	}
-	public int minValue(State state)
+	static public int minValue(State state, boolean thisRole, int depth)
 	{
-		if (state.isTerminal()) return state.heuristics(role);
+		System.out.println("\t\t\t" + depth);
+		if (state.isTerminal() > 0) {System.out.println("terminal"); return state.heuristics();}
 		int v = Integer.MAX_VALUE;
 		for (int i = 0; i < 7; i++)
 		{
 			if (state.isValid(i))
 			{
-				v = Math.min(v, maxValue(state.nextState(i, role != "white")));
+				v = Math.min(v, maxValue(state.nextState(i, thisRole), !thisRole, depth + 1));
 			}
 		}
 		return v;
 	}
 	
-	public int minimaxDecision(State state)
+	static public int minimaxDecision(State state)
 	{
+		int depth = 0;
 		int bestAction = -1;
 		int bestScore = Integer.MIN_VALUE;
 		for (int i = 0; i < 7; i++)
 		{
 			if (state.isValid(i))
 			{
-				State next = state.nextState(i, role == "white");
-				int score = minValue(next);
+				State next = state.nextState(i, true);
+				int score = minValue(next, true, depth + 1);
+				System.out.println("action " + i + " score " + score);
 				if (score > bestScore)
 				{
 					bestAction = i;
@@ -94,7 +99,29 @@ public class Nilli implements Agent
 				}
 			}
 		}
+		System.out.println("best score " + bestScore);
 		return bestAction;
+	}
+	
+	static public void main(String[] args)
+	{
+		State state = new State();
+		boolean[] pos = {true, true, false, false, false, true, true,
+						true, true, false, false, true, true, true,
+						true, true, false, false, true, true, true, 
+						false, false, true, false, true, false, false,
+						false, false, true, false, true, false, false,
+						false, false, true, true, false, false, false};
+		int[] heights = {5,6,6,0,4,6,6};
+		int current = 0;
+		for(int i = 5; i >= 0; i--) for (int j = 0; j < 7; j++) state.board[j][i] = pos[current++];
+		current = 0;
+		for (int i = 0; i < 7; i++) state.height[i] = heights[current++];
+		
+		state.print(true);
+		
+		System.out.println(minimaxDecision(state));
+		state.print(true);
 	}
 }
 
