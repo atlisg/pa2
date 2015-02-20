@@ -50,11 +50,52 @@ public class Nilli implements Agent
 
 	}
 		
+	public int maxValue(State state)
+	{
+		if (state.isTerminal()) return state.heuristics(role);
+		int v = Integer.MIN_VALUE;
+		for (int i = 0; i < 7; i++)
+		{
+			if (state.isValid(i))
+			{
+				v = Math.max(v, minValue(state.nextState(i, role == "white")));
+			}
+		}
+		return v;
+	}
+	public int minValue(State state)
+	{
+		if (state.isTerminal()) return state.heuristics(role);
+		int v = Integer.MAX_VALUE;
+		for (int i = 0; i < 7; i++)
+		{
+			if (state.isValid(i))
+			{
+				v = Math.min(v, maxValue(state.nextState(i, role != "white")));
+			}
+		}
+		return v;
+	}
 	
-	
-	
-	
-	
+	public int minimaxDecision(State state)
+	{
+		int bestAction = -1;
+		int bestScore = Integer.MIN_VALUE;
+		for (int i = 0; i < 7; i++)
+		{
+			if (state.isValid(i))
+			{
+				State next = state.nextState(i, role == "white");
+				int score = minValue(next);
+				if (score > bestScore)
+				{
+					bestAction = i;
+					bestScore = score;
+				}
+			}
+		}
+		return bestAction;
+	}
 }
 
 
