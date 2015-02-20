@@ -1,5 +1,7 @@
 import java.util.Random;
 
+import aima.core.util.datastructure.Pair;
+
 public class Nilli implements Agent
 {
 	private Random random = new Random();
@@ -23,7 +25,7 @@ public class Nilli implements Agent
 		//board = new boolean [7][6];
 		//height = new int[7];
 		//for (int i = 0; i < 7; i++)	height[i] = 0;
-		currentState = new State();
+		currentState = new State(-1);
 	}
 	
 	
@@ -34,7 +36,8 @@ public class Nilli implements Agent
 		int move = 0;
 		if (lastDrop > 0)
 		{
-			if ((myTurn && role.equals("white") || (!myTurn && !role.equals("white")))) currentState = currentState.nextState(lastDrop - 1, true);
+			if ((myTurn && role.equals("white") || (!myTurn && !role.equals("white")))) 
+				currentState = currentState.nextState(lastDrop - 1, true);
 			else currentState = currentState.nextState(lastDrop - 1, false);
 			currentState.print(myTurn);
 		}
@@ -42,12 +45,32 @@ public class Nilli implements Agent
 		// TODO: 2. run alpha-beta search to determine the best move
 		if (myTurn) {
 			if (lastDrop == 0) move = 4;
-			else move = currentState.evaluate(role);
+			else move = alphabeta(currentState, 5, 0, 0, myTurn).getSecond();
 			return "(Drop " + move + ")";
 		} else {
 			return "NOOP";
 		}
-
+	}
+	
+	Pair<Integer, Integer> alphabeta(State state, int depth, int alpha, int beta, boolean myTurn) {
+		if (depth == 0 || currentState.isTerminal()) {
+			return new Pair<Integer, Integer>(currentState.heuristics(role), currentState.parent);
+		}
+		if (myTurn) {
+			for (int i = 0; i < 7; i++)
+			{
+				alpha = Math.max(alpha, alphabeta(currentState.nextState(i, myTurn), depth - 1, alpha, beta, !myTurn).getFirst());
+				if (beta <= alpha) break;
+			}
+			return new Pair<Integer, Integer>(alpha, currentState.parent);
+		} else {
+			for (int i = 0; i < 7; i++)
+			{
+				beta = Math.min(beta, alphabeta(currentState.nextState(i, myTurn), depth - 1, alpha, beta, !myTurn).getFirst());
+				if (beta <= alpha) break;
+			}
+			return new Pair<Integer, Integer>(beta, currentState.parent);
+		}
 	}
 		
 	public int maxValue(State state)
