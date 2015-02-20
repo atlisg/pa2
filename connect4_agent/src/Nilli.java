@@ -60,6 +60,7 @@ public class Nilli implements Agent
 			type1 = 0; type2 = 0;
 			if (height[i] < 5) {
 				int j = height[i];
+				
 				// count positive
 				if (space(i+1,j) == 1) type1++;
 				if (space(i+1,j+1) == 1) type1++;
