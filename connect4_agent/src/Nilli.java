@@ -10,12 +10,7 @@ public class Nilli implements Agent
 	private int playclock;
 	private boolean myTurn;
 	
-	
-	
-	//boolean[][] board;
-	//int[] height;
-	
-	static int maxDepth = 10;
+	static int maxDepth = 8;
 	static int nodes = 0;
 	
 	State currentState;
@@ -25,6 +20,7 @@ public class Nilli implements Agent
 		this.role = role;
 		this.playclock = playclock;
 		myTurn = !role.equals("WHITE");
+		System.out.println(role);
 		
 		// TODO: add your own initialization code here
 		//board = new boolean [7][6];
@@ -41,8 +37,8 @@ public class Nilli implements Agent
 		int move = 0;
 		if (lastDrop > 0)
 		{
-			if ((myTurn && role.equals("white") || (!myTurn && !role.equals("white")))) currentState = currentState.nextState(lastDrop - 1, false);
-			else currentState = currentState.nextState(lastDrop - 1, true);
+			if (myTurn) currentState = currentState.nextState(lastDrop - 1, true);
+			else currentState = currentState.nextState(lastDrop - 1, false);
 		}
 		currentState.print(myTurn);
 		myTurn = !myTurn;
