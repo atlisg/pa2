@@ -199,8 +199,6 @@ public class State {
 			}
 		}
 		return 50 + type1 - type2;
-		//if (role == "white") return type1 - type2;
-		//else return type2 - type1;
 	}
 	
 	public static void main(String[] args)

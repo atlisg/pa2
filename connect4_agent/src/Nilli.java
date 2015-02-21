@@ -4,16 +4,18 @@ import java.util.Random;
 
 public class Nilli implements Agent
 {
-	private Random random = new Random();
+	static public Random random = new Random();
 	
 	private String role;
 	private int playclock;
 	private boolean myTurn;
 	
-	static int maxDepth = 8;
+	static int maxDepth = 12;
 	static int nodes = 0;
 	
 	State currentState;
+	
+//	static public class TimeLimitException extends Exception {}
 	
 	public void init(String role, int playclock)
 	{
@@ -47,7 +49,8 @@ public class Nilli implements Agent
 		if (myTurn) {
 			/*if (lastDrop == 0) move = 4;
 			else move = currentState.evaluate(role);*/
-			move = AlphaBetaSearch(currentState) + 1;
+			//move = AlphaBetaSearch(currentState) + 1;
+			move = find_move(System.currentTimeMillis() + playclock * 1000) + 1;
 			return "(Drop " + move + ")";
 		} else {
 			return "NOOP";
@@ -122,9 +125,10 @@ public class Nilli implements Agent
 	
 	
 	
-	static public int AlphaBetaMaxValue(State state, boolean thisRole, int depth, int alpha, int beta)
+	static public int AlphaBetaMaxValue(State state, boolean thisRole, int depth, int alpha, int beta, long timeLimit) throws Exception
 	{
 		nodes++;
+		if (timeLimit - System.currentTimeMillis() < 100) throw new Exception();
 		//System.out.println("\t\t\t" + depth);
 		//System.out.println("max val, player is " + thisRole);
 		//state.print(true);
@@ -136,7 +140,7 @@ public class Nilli implements Agent
 		{
 			if (state.isValid(i))
 			{
-				v = Math.max(v, AlphaBetaMinValue(state.nextState(i, thisRole), !thisRole, depth + 1, alpha, beta));
+				v = Math.max(v, AlphaBetaMinValue(state.nextState(i, thisRole), !thisRole, depth + 1, alpha, beta, timeLimit));
 				if (v >= beta) return v;
 				alpha = Math.max(alpha,v);
 			}
@@ -144,7 +148,7 @@ public class Nilli implements Agent
 		//System.out.println("value " + v);
 		return v;
 	}
-	static public int AlphaBetaMinValue(State state, boolean thisRole, int depth, int alpha, int beta)
+	static public int AlphaBetaMinValue(State state, boolean thisRole, int depth, int alpha, int beta, long timeLimit) throws Exception
 	{
 		nodes++;
 		//System.out.println("\t\t\t" + depth);
@@ -158,7 +162,7 @@ public class Nilli implements Agent
 		{
 			if (state.isValid(i))
 			{
-				v = Math.min(v, AlphaBetaMaxValue(state.nextState(i, thisRole), !thisRole, depth + 1, alpha, beta));
+				v = Math.min(v, AlphaBetaMaxValue(state.nextState(i, thisRole), !thisRole, depth + 1, alpha, beta, timeLimit));
 				if (v <= alpha) return v;
 				beta = Math.min(beta, v);
 			}
@@ -167,7 +171,7 @@ public class Nilli implements Agent
 		return v;
 	}
 	
-	static public int AlphaBetaSearch(State state)
+	static public int AlphaBetaSearch(State state, long timeLimit) throws Exception
 	{
 		int depth = 0;
 		int bestAction = -1;
@@ -177,20 +181,38 @@ public class Nilli implements Agent
 			if (state.isValid(i))
 			{
 				State next = state.nextState(i, true);
-				int score = AlphaBetaMinValue(next, false, depth + 1, Integer.MIN_VALUE, Integer.MAX_VALUE);
-				System.out.println("action " + i + " score " + score);
-				if (score > bestScore)
+				int score = AlphaBetaMinValue(next, false, depth + 1, Integer.MIN_VALUE, Integer.MAX_VALUE, timeLimit);
+				//System.out.println("action " + i + " score " + score);
+				if ((score > bestScore) || (score == bestScore && random.nextBoolean()))
 				{
 					bestAction = i;
 					bestScore = score;
 				}
 			}
 		}
-		System.out.println("best score " + bestScore);
+		//System.out.println("best score " + bestScore);
 		return bestAction;
 	}
 
-	
+	public int find_move(long timeLimit)
+	{
+		int bestMove = -1;
+		maxDepth = 2;
+		while(true)
+		{
+			// try to run search
+			try 
+			{
+				bestMove = AlphaBetaSearch(currentState, timeLimit);
+			} 
+			catch (Exception t)
+			{
+				System.out.println("out of time, depth " + maxDepth);
+				return bestMove;
+			}
+			maxDepth += 2;
+		}
+	}
 	
 	static public void main(String[] args)
 	{
@@ -232,7 +254,7 @@ public class Nilli implements Agent
 		state.print(true);
 		
 		//System.out.println(minimaxDecision(state));
-		System.out.println(AlphaBetaSearch(state));
+		//System.out.println(AlphaBetaSearch(state, ));
 		state.print(true);
 		System.out.println("nodes: " + nodes);
 	}
