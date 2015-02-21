@@ -37,9 +37,6 @@ public class Nilli implements Agent
 		int move = 0;
 		if (lastDrop > 0)
 		{
-			/*System.out.println(myTurn + " " + role.equals("white"));
-			if ((myTurn && role.equals("white") || (!myTurn && !role.equals("white")))) currentState = currentState.nextState(lastDrop - 1, false);
-			else currentState = currentState.nextState(lastDrop - 1, true);*/
 			if (myTurn) currentState = currentState.nextState(lastDrop - 1, true);
 			else currentState = currentState.nextState(lastDrop - 1, false);
 		}
