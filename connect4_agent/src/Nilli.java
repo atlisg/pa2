@@ -1,7 +1,5 @@
 import java.util.Random;
 
-import aima.core.util.datastructure.Pair;
-
 public class Nilli implements Agent
 {
 	private Random random = new Random();
@@ -25,7 +23,7 @@ public class Nilli implements Agent
 		//board = new boolean [7][6];
 		//height = new int[7];
 		//for (int i = 0; i < 7; i++)	height[i] = 0;
-		currentState = new State(-1);
+		currentState = new State();
 	}
 	
 	
@@ -36,8 +34,7 @@ public class Nilli implements Agent
 		int move = 0;
 		if (lastDrop > 0)
 		{
-			if ((myTurn && role.equals("white") || (!myTurn && !role.equals("white")))) 
-				currentState = currentState.nextState(lastDrop - 1, true);
+			if ((myTurn && role.equals("white") || (!myTurn && !role.equals("white")))) currentState = currentState.nextState(lastDrop - 1, true);
 			else currentState = currentState.nextState(lastDrop - 1, false);
 			currentState.print(myTurn);
 		}
@@ -46,37 +43,19 @@ public class Nilli implements Agent
 		
 		if (myTurn) {
 			if (lastDrop == 0) move = 4;
-			else move = alphabeta(currentState, 5, 0, 0, myTurn).getSecond();
+			else move = currentState.evaluate(role);
 			return "(Drop " + move + ")";
 		} else {
 			return "NOOP";
 		}
-	}
-	
-	Pair<Integer, Integer> alphabeta(State state, int depth, int alpha, int beta, boolean myTurn) {
-		if (depth == 0 || currentState.isTerminal()) {
-			return new Pair<Integer, Integer>(currentState.heuristics(role), currentState.parent);
-		}
-		if (myTurn) {
-			for (int i = 0; i < 7; i++)
-			{
-				alpha = Math.max(alpha, alphabeta(currentState.nextState(i, myTurn), depth - 1, alpha, beta, !myTurn).getFirst());
-				if (beta <= alpha) break;
-			}
-			return new Pair<Integer, Integer>(alpha, currentState.parent);
-		} else {
-			for (int i = 0; i < 7; i++)
-			{
-				beta = Math.min(beta, alphabeta(currentState.nextState(i, myTurn), depth - 1, alpha, beta, !myTurn).getFirst());
-				if (beta <= alpha) break;
-			}
-			return new Pair<Integer, Integer>(beta, currentState.parent);
-		}
+
 	}
 		
 	static public int maxValue(State state, boolean thisRole, int depth)
 	{
 		System.out.println("\t\t\t" + depth);
+		System.out.println("max val, player is " + thisRole);
+		state.print(true);
 		if (state.isTerminal() > 0) {System.out.println("terminal");return state.heuristics();}
 		int v = Integer.MIN_VALUE;
 		for (int i = 0; i < 7; i++)
@@ -86,11 +65,14 @@ public class Nilli implements Agent
 				v = Math.max(v, minValue(state.nextState(i, thisRole), !thisRole, depth + 1));
 			}
 		}
+		System.out.println("value " + v);
 		return v;
 	}
 	static public int minValue(State state, boolean thisRole, int depth)
 	{
 		System.out.println("\t\t\t" + depth);
+		System.out.println("min val, player is " + thisRole);
+		state.print(false);
 		if (state.isTerminal() > 0) {System.out.println("terminal"); return state.heuristics();}
 		int v = Integer.MAX_VALUE;
 		for (int i = 0; i < 7; i++)
@@ -100,6 +82,7 @@ public class Nilli implements Agent
 				v = Math.min(v, maxValue(state.nextState(i, thisRole), !thisRole, depth + 1));
 			}
 		}
+		System.out.println("value "+ v);
 		return v;
 	}
 	
@@ -113,7 +96,7 @@ public class Nilli implements Agent
 			if (state.isValid(i))
 			{
 				State next = state.nextState(i, true);
-				int score = minValue(next, true, depth + 1);
+				int score = minValue(next, false, depth + 1);
 				System.out.println("action " + i + " score " + score);
 				if (score > bestScore)
 				{
@@ -129,13 +112,27 @@ public class Nilli implements Agent
 	static public void main(String[] args)
 	{
 		State state = new State();
-		boolean[] pos = {true, true, false, false, false, true, true,
-						true, true, false, false, true, true, true,
-						true, true, false, false, true, true, true, 
-						false, false, true, false, true, false, false,
-						false, false, true, false, true, false, false,
-						false, false, true, true, false, false, false};
-		int[] heights = {5,6,6,0,4,6,6};
+		/*boolean[] pos = {true, true, false, false, false, true, true,
+						false, true, false, false, true, true, true,
+						false, true, false, false, true, true, true, 
+						false, false, false, false, true, false, false,
+						true, false, true, false, true, false, false,
+						false, false, false, true, false, false, false};
+		int[] heights = {5,6,5,1,4,6,6};*/
+		/*boolean[] pos = {false, false, false, false, false, false, false, 
+				false, false, false, false, true, false, false, 
+				false, true, true, false, true, true, false, 
+				false, false, false, true, false, false, false, 
+				true, true, true, false, true, true, true,
+				false, false, false, true, false, false, false};
+		int[] heights = {4,5,5,4,5,5,4};*/
+		boolean[] pos = {false, false, false, false, false, false, true, 
+				false, false, false, false, false, false, false, 
+				false, true, false, true , true, true, false,
+				true, false, false, false, true, false, true, 
+				true, true, true, false, true, false, true,
+				false, true, true, true, false, true, false};
+		int[] heights = {4,5,4,5,3,6,6};
 		int current = 0;
 		for(int i = 5; i >= 0; i--) for (int j = 0; j < 7; j++) state.board[j][i] = pos[current++];
 		current = 0;

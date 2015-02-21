@@ -3,21 +3,19 @@ import java.util.*;
 public class State {
 	boolean [][]board;
 	int[] height;
-	int parent;
 	
-	public State(int parent)
+	public State()
 	{
 		board = new boolean[7][6];
 		height = new int[7];
 		for (int i = 0; i < 7; i++) height[i] = 0;
-		this.parent = parent;
 	}
 	// updates the board with move 'action' (0-index) from player 'player
 	public State nextState(int action, boolean player)
 	{
-		System.out.println("next state");
+		System.out.println("player is " + player);
 		if (!isValid(action)) {System.out.println("action not valid"); return null;}
-		State next = new State(action);
+		State next = new State();
 		for (int i = 0; i < 7; i++)
 		{
 			for (int j = 0; j < height[i]; j++)
@@ -223,7 +221,7 @@ public class State {
 			}
 		}*/
 		Scanner in = new Scanner(System.in);
-		State state = new State(0);
+		State state = new State();
 		Random rand = new Random();
 		boolean player = true;
 		//state.print(player);
