@@ -11,6 +11,9 @@ public class Nilli implements Agent
 	//boolean[][] board;
 	//int[] height;
 	
+	static int maxDepth = 7;
+	static int nodes = 0;
+	
 	State currentState;
 	
 	public void init(String role, int playclock)
@@ -42,8 +45,9 @@ public class Nilli implements Agent
 		// TODO: 2. run alpha-beta search to determine the best move
 		
 		if (myTurn) {
-			if (lastDrop == 0) move = 4;
-			else move = currentState.evaluate(role);
+			/*if (lastDrop == 0) move = 4;
+			else move = currentState.evaluate(role);*/
+			move = AlphaBetaSearch(currentState) + 1;
 			return "(Drop " + move + ")";
 		} else {
 			return "NOOP";
@@ -53,10 +57,13 @@ public class Nilli implements Agent
 		
 	static public int maxValue(State state, boolean thisRole, int depth)
 	{
+		nodes++;
 		System.out.println("\t\t\t" + depth);
 		System.out.println("max val, player is " + thisRole);
 		state.print(true);
 		if (state.isTerminal() > 0) {System.out.println("terminal");return state.heuristics();}
+		// depth limit
+		if (depth >= maxDepth) {System.out.println("deep enough"); return state.heuristics();}
 		int v = Integer.MIN_VALUE;
 		for (int i = 0; i < 7; i++)
 		{
@@ -70,10 +77,13 @@ public class Nilli implements Agent
 	}
 	static public int minValue(State state, boolean thisRole, int depth)
 	{
+		nodes++;
 		System.out.println("\t\t\t" + depth);
 		System.out.println("min val, player is " + thisRole);
 		state.print(false);
 		if (state.isTerminal() > 0) {System.out.println("terminal"); return state.heuristics();}
+		// depth limit
+		if (depth >= maxDepth) {System.out.println("deep enough"); return state.heuristics();}
 		int v = Integer.MAX_VALUE;
 		for (int i = 0; i < 7; i++)
 		{
@@ -109,6 +119,78 @@ public class Nilli implements Agent
 		return bestAction;
 	}
 	
+	
+	
+	static public int AlphaBetaMaxValue(State state, boolean thisRole, int depth, int alpha, int beta)
+	{
+		nodes++;
+		System.out.println("\t\t\t" + depth);
+		System.out.println("max val, player is " + thisRole);
+		state.print(true);
+		if (state.isTerminal() > 0) {System.out.println("terminal");return state.heuristics();}
+		// depth limit
+		if (depth >= maxDepth) {System.out.println("deep enough"); return state.heuristics();}
+		int v = Integer.MIN_VALUE;
+		for (int i = 0; i < 7; i++)
+		{
+			if (state.isValid(i))
+			{
+				v = Math.max(v, AlphaBetaMinValue(state.nextState(i, thisRole), !thisRole, depth + 1, alpha, beta));
+				if (v <= alpha) return v;
+				alpha = Math.max(alpha,v);
+			}
+		}
+		System.out.println("value " + v);
+		return v;
+	}
+	static public int AlphaBetaMinValue(State state, boolean thisRole, int depth, int alpha, int beta)
+	{
+		nodes++;
+		System.out.println("\t\t\t" + depth);
+		System.out.println("min val, player is " + thisRole);
+		state.print(false);
+		if (state.isTerminal() > 0) {System.out.println("terminal"); return state.heuristics();}
+		// depth limit
+		if (depth >= maxDepth) {System.out.println("deep enough"); return state.heuristics();}
+		int v = Integer.MAX_VALUE;
+		for (int i = 0; i < 7; i++)
+		{
+			if (state.isValid(i))
+			{
+				v = Math.min(v, AlphaBetaMaxValue(state.nextState(i, thisRole), !thisRole, depth + 1, alpha, beta));
+				if (v <= alpha) return v;
+				beta = Math.min(beta, v);
+			}
+		}
+		System.out.println("value "+ v);
+		return v;
+	}
+	
+	static public int AlphaBetaSearch(State state)
+	{
+		int depth = 0;
+		int bestAction = -1;
+		int bestScore = Integer.MIN_VALUE;
+		for (int i = 0; i < 7; i++)
+		{
+			if (state.isValid(i))
+			{
+				State next = state.nextState(i, true);
+				int score = AlphaBetaMinValue(next, false, depth + 1, Integer.MIN_VALUE, Integer.MAX_VALUE);
+				System.out.println("action " + i + " score " + score);
+				if (score > bestScore)
+				{
+					bestAction = i;
+					bestScore = score;
+				}
+			}
+		}
+		System.out.println("best score " + bestScore);
+		return bestAction;
+	}
+
+	
+	
 	static public void main(String[] args)
 	{
 		State state = new State();
@@ -126,13 +208,21 @@ public class Nilli implements Agent
 				true, true, true, false, true, true, true,
 				false, false, false, true, false, false, false};
 		int[] heights = {4,5,5,4,5,5,4};*/
-		boolean[] pos = {false, false, false, false, false, false, true, 
+		/*boolean[] pos = {false, false, false, false, false, false, true, 
 				false, false, false, false, false, false, false, 
 				false, true, false, true , true, true, false,
 				true, false, false, false, true, false, true, 
 				true, true, true, false, true, false, true,
-				false, true, true, true, false, true, false};
-		int[] heights = {4,5,4,5,3,6,6};
+				false, true, true, true, false, true, false};*/
+		//int[] heights = {4,5,4,5,3,6,6};
+		boolean[] pos = {false, false, false, false, false, false, true, 
+						false, false, false, false, false, false, false, 
+						false, true, false, true , true, true, false,
+						false, false, false, false, true, false, true, 
+						false, true, true, false, true, false, true,
+						false, true, true, true, false, true, false};
+		//int[] heights = {3,3,3,0,3,3,3};
+		int[] heights = {0,0,0,0,0,0,0};
 		int current = 0;
 		for(int i = 5; i >= 0; i--) for (int j = 0; j < 7; j++) state.board[j][i] = pos[current++];
 		current = 0;
@@ -140,8 +230,10 @@ public class Nilli implements Agent
 		
 		state.print(true);
 		
-		System.out.println(minimaxDecision(state));
+		//System.out.println(minimaxDecision(state));
+		System.out.println(AlphaBetaSearch(state));
 		state.print(true);
+		System.out.println("nodes: " + nodes);
 	}
 }
 

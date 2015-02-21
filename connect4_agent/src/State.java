@@ -197,7 +197,7 @@ public class State {
 				}
 			}
 		}
-		return type1 - type2;
+		return 50 + type1 - type2;
 		//if (role == "white") return type1 - type2;
 		//else return type2 - type1;
 	}
