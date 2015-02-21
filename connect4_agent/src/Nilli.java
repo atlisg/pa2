@@ -1,5 +1,7 @@
 import java.util.Random;
 
+//import aima.core.util.datastructure.Pair;
+
 public class Nilli implements Agent
 {
 	private Random random = new Random();
@@ -8,10 +10,12 @@ public class Nilli implements Agent
 	private int playclock;
 	private boolean myTurn;
 	
+	
+	
 	//boolean[][] board;
 	//int[] height;
 	
-	static int maxDepth = 7;
+	static int maxDepth = 10;
 	static int nodes = 0;
 	
 	State currentState;
@@ -37,10 +41,10 @@ public class Nilli implements Agent
 		int move = 0;
 		if (lastDrop > 0)
 		{
-			if ((myTurn && role.equals("white") || (!myTurn && !role.equals("white")))) currentState = currentState.nextState(lastDrop - 1, true);
-			else currentState = currentState.nextState(lastDrop - 1, false);
-			currentState.print(myTurn);
+			if ((myTurn && role.equals("white") || (!myTurn && !role.equals("white")))) currentState = currentState.nextState(lastDrop - 1, false);
+			else currentState = currentState.nextState(lastDrop - 1, true);
 		}
+		currentState.print(myTurn);
 		myTurn = !myTurn;
 		// TODO: 2. run alpha-beta search to determine the best move
 		
@@ -96,6 +100,7 @@ public class Nilli implements Agent
 		return v;
 	}
 	
+	
 	static public int minimaxDecision(State state)
 	{
 		int depth = 0;
@@ -124,34 +129,34 @@ public class Nilli implements Agent
 	static public int AlphaBetaMaxValue(State state, boolean thisRole, int depth, int alpha, int beta)
 	{
 		nodes++;
-		System.out.println("\t\t\t" + depth);
-		System.out.println("max val, player is " + thisRole);
-		state.print(true);
-		if (state.isTerminal() > 0) {System.out.println("terminal");return state.heuristics();}
+		//System.out.println("\t\t\t" + depth);
+		//System.out.println("max val, player is " + thisRole);
+		//state.print(true);
+		if (state.isTerminal() > 0) {/*System.out.println("terminal");*/return state.heuristics();}
 		// depth limit
-		if (depth >= maxDepth) {System.out.println("deep enough"); return state.heuristics();}
+		if (depth >= maxDepth) {/*System.out.println("deep enough");*/ return state.heuristics();}
 		int v = Integer.MIN_VALUE;
 		for (int i = 0; i < 7; i++)
 		{
 			if (state.isValid(i))
 			{
 				v = Math.max(v, AlphaBetaMinValue(state.nextState(i, thisRole), !thisRole, depth + 1, alpha, beta));
-				if (v <= alpha) return v;
+				if (v >= beta) return v;
 				alpha = Math.max(alpha,v);
 			}
 		}
-		System.out.println("value " + v);
+		//System.out.println("value " + v);
 		return v;
 	}
 	static public int AlphaBetaMinValue(State state, boolean thisRole, int depth, int alpha, int beta)
 	{
 		nodes++;
-		System.out.println("\t\t\t" + depth);
-		System.out.println("min val, player is " + thisRole);
-		state.print(false);
-		if (state.isTerminal() > 0) {System.out.println("terminal"); return state.heuristics();}
+		//System.out.println("\t\t\t" + depth);
+		//System.out.println("min val, player is " + thisRole);
+		//state.print(false);
+		if (state.isTerminal() > 0) {/*System.out.println("terminal");*/ return state.heuristics();}
 		// depth limit
-		if (depth >= maxDepth) {System.out.println("deep enough"); return state.heuristics();}
+		if (depth >= maxDepth) {/*System.out.println("deep enough");*/ return state.heuristics();}
 		int v = Integer.MAX_VALUE;
 		for (int i = 0; i < 7; i++)
 		{
@@ -162,7 +167,7 @@ public class Nilli implements Agent
 				beta = Math.min(beta, v);
 			}
 		}
-		System.out.println("value "+ v);
+		//System.out.println("value "+ v);
 		return v;
 	}
 	
@@ -235,6 +240,29 @@ public class Nilli implements Agent
 		state.print(true);
 		System.out.println("nodes: " + nodes);
 	}
+	
+	/*
+	Pair<Integer, Integer> alphabeta(State state, int depth, int alpha, int beta, boolean myTurn) {
+		if (depth == 0 || currentState.isTerminal()) {
+			return new Pair<Integer, Integer>(currentState.heuristics(role), currentState.parent);
+		}
+		if (myTurn) {
+			for (int i = 0; i < 7; i++)
+			{
+				alpha = Math.max(alpha, alphabeta(currentState.nextState(i, myTurn), depth - 1, alpha, beta, !myTurn).getFirst());
+				if (beta <= alpha) break;
+			}
+			return new Pair<Integer, Integer>(alpha, currentState.parent);
+		} else {
+			for (int i = 0; i < 7; i++)
+			{
+				beta = Math.min(beta, alphabeta(currentState.nextState(i, myTurn), depth - 1, alpha, beta, !myTurn).getFirst());
+				if (beta <= alpha) break;
+			}
+			return new Pair<Integer, Integer>(beta, currentState.parent);
+		}
+		
+	}*/
 }
 
 

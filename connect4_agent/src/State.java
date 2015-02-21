@@ -13,7 +13,7 @@ public class State {
 	// updates the board with move 'action' (0-index) from player 'player
 	public State nextState(int action, boolean player)
 	{
-		System.out.println("player is " + player);
+		//System.out.println("player is " + player);
 		if (!isValid(action)) {System.out.println("action not valid"); return null;}
 		State next = new State();
 		for (int i = 0; i < 7; i++)
@@ -42,9 +42,9 @@ public class State {
 			int player;
 			if (board[i][3]) player = 1;
 			else player = 2;
-			if (height[i] >= 4) if (board[i][0] == board[i][1] && board[i][1] == board[i][2] && board[i][2] == board[i][3]) {System.out.println("vertical from " + i + " " + 4); return player;}
-			if (height[i] >= 5) if (board[i][1] == board[i][2] && board[i][2] == board[i][3] && board[i][3] == board[i][4]) {System.out.println("vertical from " + i + " " + 5); return player;}
-			if (height[i] >= 6) if (board[i][2] == board[i][3] && board[i][3] == board[i][4] && board[i][4] == board[i][5]) {System.out.println("vertical from " + i + " " + 6); return player;}
+			if (height[i] >= 4) if (board[i][0] == board[i][1] && board[i][1] == board[i][2] && board[i][2] == board[i][3]) {/*System.out.println("vertical from " + i + " " + 4);*/ return player;}
+			if (height[i] >= 5) if (board[i][1] == board[i][2] && board[i][2] == board[i][3] && board[i][3] == board[i][4]) {/*System.out.println("vertical from " + i + " " + 5);*/ return player;}
+			if (height[i] >= 6) if (board[i][2] == board[i][3] && board[i][3] == board[i][4] && board[i][4] == board[i][5]) {/*System.out.println("vertical from " + i + " " + 6);*/ return player;}
 		}
 		// horizontal
 		for (int i = 0; i < 6; i++)
@@ -55,22 +55,22 @@ public class State {
 			else player = 2;
 			if (Math.min(height[0], Math.min(height[1], Math.min(height[2], height[3]))) > i)
 			{
-				if (board[0][i] == board[1][i] && board[1][i] == board[2][i] && board[2][i] == board[3][i]) {System.out.println("horizontal from " + 0 + " " + i);return player;}
+				if (board[0][i] == board[1][i] && board[1][i] == board[2][i] && board[2][i] == board[3][i]) {/*System.out.println("horizontal from " + 0 + " " + i);*/return player;}
 			}
 			// 1
 			if (Math.min(height[4], Math.min(height[1], Math.min(height[2], height[3]))) > i)
 			{
-				if (board[3][i] == board[4][i] && board[1][i] == board[2][i] && board[2][i] == board[3][i]) {System.out.println("horizontal from " + 1 +" "+ i); return player;}
+				if (board[3][i] == board[4][i] && board[1][i] == board[2][i] && board[2][i] == board[3][i]) {/*System.out.println("horizontal from " + 1 +" "+ i);*/ return player;}
 			}
 			// 2
 			if (Math.min(height[4], Math.min(height[5], Math.min(height[2], height[3]))) > i)
 			{
-				if (board[3][i] == board[4][i] && board[4][i] == board[5][i] && board[2][i] == board[3][i]) {System.out.println("horizontal from " + 2 +" "+ i);return player;}
+				if (board[3][i] == board[4][i] && board[4][i] == board[5][i] && board[2][i] == board[3][i]) {/*System.out.println("horizontal from " + 2 +" "+ i);*/return player;}
 			}
 			// 3
 			if (Math.min(height[4], Math.min(height[5], Math.min(height[6], height[3]))) > i)
 			{
-				if (board[3][i] == board[4][i] && board[4][i] == board[5][i] && board[5][i] == board[6][i]) {System.out.println("horizontal from " + 3 + " " + i);return player;}
+				if (board[3][i] == board[4][i] && board[4][i] == board[5][i] && board[5][i] == board[6][i]) {/*System.out.println("horizontal from " + 3 + " " + i);*/return player;}
 			}
 		}
 		// diagonal
@@ -84,7 +84,7 @@ public class State {
 				else player = 2;
 				if (height[i + 1] > j - 1 && value == board[i + 1][j - 1])
 					if (height[i + 2] > j - 2 && value == board[i + 2][j - 2])
-						if(height[i + 3] > j - 3 && value == board[i + 3][j - 3]) {System.out.println("diagonal-1 from " + i + " " + j);return player;}
+						if(height[i + 3] > j - 3 && value == board[i + 3][j - 3]) {/*System.out.println("diagonal-1 from " + i + " " + j);*/return player;}
 			}
 		}
 		// other diagonal
@@ -98,7 +98,7 @@ public class State {
 				else player = 2;
 				if (height[i - 1] > j - 1 && value == board[i - 1][j - 1])
 					if (height[i - 2] > j - 2 && value == board[i - 2][j - 2])
-						if(height[i - 3] > j - 3 && value == board[i - 3][j - 3]) {System.out.println("diagonal-2 from " + i + " "+ j);return player;}
+						if(height[i - 3] > j - 3 && value == board[i - 3][j - 3]) {/*System.out.println("diagonal-2 from " + i + " "+ j);*/return player;}
 			}
 		}
 		return 0;
@@ -175,6 +175,7 @@ public class State {
 	int heuristics()
 	{
 		int result = isTerminal();
+		//if(result > 0) {System.out.println("is terminal ???"); print(true);}
 		if (result == 1) return 100;
 		else if (result == 2) return 0;
 		else if (result == 3) return 50;
