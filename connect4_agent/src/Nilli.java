@@ -13,7 +13,7 @@ public class Nilli implements Agent
 	static int maxDepth = 12;
 	static int nodes = 0;
 	
-	State currentState;
+	static State currentState;
 	
 //	static public class TimeLimitException extends Exception {}
 	
@@ -28,7 +28,7 @@ public class Nilli implements Agent
 		//board = new boolean [7][6];
 		//height = new int[7];
 		//for (int i = 0; i < 7; i++)	height[i] = 0;
-		currentState = new State();
+		currentState = new State(-1);
 	}
 	
 	
@@ -47,10 +47,10 @@ public class Nilli implements Agent
 		// TODO: 2. run alpha-beta search to determine the best move
 		
 		if (myTurn) {
-			/*if (lastDrop == 0) move = 4;
-			else move = currentState.evaluate(role);*/
-			//move = AlphaBetaSearch(currentState) + 1;
-			move = find_move(System.currentTimeMillis() + playclock * 1000) + 1;
+			if (lastDrop == 0) move = 4;
+			//else move = currentState.evaluate(role);
+			//else move = AlphaBetaSearch(currentState, 20) + 1;
+			else move = find_move(System.currentTimeMillis() + playclock * 1000) + 1;
 			return "(Drop " + move + ")";
 		} else {
 			return "NOOP";
@@ -132,9 +132,9 @@ public class Nilli implements Agent
 		//System.out.println("\t\t\t" + depth);
 		//System.out.println("max val, player is " + thisRole);
 		//state.print(true);
-		if (state.isTerminal() > 0) {/*System.out.println("terminal");*/return state.heuristics();}
+		if (state.terminal(thisRole) > 0) {/*System.out.println("terminal");*/return state.evaluate();}
 		// depth limit
-		if (depth >= maxDepth) {/*System.out.println("deep enough");*/ return state.heuristics();}
+		if (depth >= maxDepth) {/*System.out.println("deep enough");*/ return state.evaluate();}
 		int v = Integer.MIN_VALUE;
 		for (int i = 0; i < 7; i++)
 		{
@@ -154,9 +154,9 @@ public class Nilli implements Agent
 		//System.out.println("\t\t\t" + depth);
 		//System.out.println("min val, player is " + thisRole);
 		//state.print(false);
-		if (state.isTerminal() > 0) {/*System.out.println("terminal");*/ return state.heuristics();}
+		if (state.terminal(thisRole) > 0) {/*System.out.println("terminal");*/ return state.evaluate();}
 		// depth limit
-		if (depth >= maxDepth) {/*System.out.println("deep enough");*/ return state.heuristics();}
+		if (depth >= maxDepth) {/*System.out.println("deep enough");*/ return state.evaluate();}
 		int v = Integer.MAX_VALUE;
 		for (int i = 0; i < 7; i++)
 		{
@@ -216,7 +216,7 @@ public class Nilli implements Agent
 	
 	static public void main(String[] args)
 	{
-		State state = new State();
+		State state = new State(-1);
 		/*boolean[] pos = {true, true, false, false, false, true, true,
 						false, true, false, false, true, true, true,
 						false, true, false, false, true, true, true, 

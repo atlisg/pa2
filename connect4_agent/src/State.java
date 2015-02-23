@@ -3,19 +3,21 @@ import java.util.*;
 public class State {
 	boolean [][]board;
 	int[] height;
+	int parent;         // who the fuck just called for this state?
 	
-	public State()
+	public State(int parent)
 	{
 		board = new boolean[7][6];
 		height = new int[7];
 		for (int i = 0; i < 7; i++) height[i] = 0;
+		this.parent = parent;
 	}
 	// updates the board with move 'action' (0-index) from player 'player
 	public State nextState(int action, boolean player)
 	{
 		//System.out.println("player is " + player);
 		if (!isValid(action)) {System.out.println("action not valid"); return null;}
-		State next = new State();
+		State next = new State(action);
 		for (int i = 0; i < 7; i++)
 		{
 			for (int j = 0; j < height[i]; j++)
@@ -104,45 +106,77 @@ public class State {
 		return 0;
 	}
 	
-	int evaluate(String role)
-	{
-		int type1, type2, max1 = 0, max2 = 0, i1 = 0, i2 = 0;
-		for (int i = 0; i < 7; i++)
-		{
-			type1 = 0; type2 = 0;
-			if (height[i] < 5) {
-				int j = height[i];
-				
-				// count positive
-				if (space(i+1,j) == 1) type1++;
-				if (space(i+1,j+1) == 1) type1++;
-				if (space(i-1,j+1) == 1) type1++;
-				if (space(i-1,j) == 1) type1++;
-				if (space(i-1,j-1) == 1) type1++;
-				if (space(i,j-1) == 1) type1++;
-				if (space(i+1,j-1) == 1) type1++;
-				/*if (space(i+1,j) == 1 || space(i+1,j+1) == 1 || space(i+1,j-1) == 1 || space(i,j+1) == 1 ||
-						space(i,j-1) == 1 || space(i-1,j-1) == 1 || space(i-1,j) == 1 ||space(i-1,j+1) == 1) type1++;*/
-				// count negative
-				if (space(i+1,j) == 0) type2++;
-				if (space(i+1,j+1) == 0) type2++;
-				if (space(i-1,j+1) == 0) type2++;
-				if (space(i-1,j) == 0) type2++;
-				if (space(i-1,j-1) == 0) type2++;
-				if (space(i,j-1) == 0) type2++;
-				if (space(i+1,j-1) == 0) type2++;
-				/*if (space(i+1,j) == 0 || space(i+1,j+1) == 0 || space(i+1,j-1) == 0 || space(i,j+1) == 0 ||
-						space(i,j-1) == 0 || space(i-1,j-1) == 0 || space(i-1,j) == 0 ||space(i-1,j+1) == 0) type2++;*/
-			}
-			if (max1 < type1) i1 = i;
-			if (max2 < type2) i2 = i;
-			max1 = Math.max(max1, type1);
-			max2 = Math.max(max2, type2);
+	public int terminal(boolean player) {
+		int i = parent;
+		int j = height[parent];
+		
+		if (count(i, j,  1, 0, player) + count(i, j, -1,  0, player) - 1 == 4) {
+			if (player) return 1;
+			else return 2;
 		}
-		System.out.println("max1: " + max1 + " max2: " + max2 + " i1: " + i1 + " i2: " + i2);
-		if (role.equals("WHITE")) return i2 + 1;
-		else return i1 + 1;
+		if (count(i, j,  1, 1, player) + count(i, j, -1, -1, player) - 1 == 4) {
+			if (player) return 1;
+			else return 2;
+		}
+		if (count(i, j, -1, 1, player) + count(i, j,  1, -1, player) - 1 == 4) {
+			if (player) return 1;
+			else return 2;
+		}
+		if (count(i, j,  0, 1, player) + count(i, j,  0, -1, player) - 1 == 4) {
+			if (player) return 1;
+			else return 2;
+		}
+		
+		if (height[0] == 6 && height[1] == 6 && height[2] == 6 && height[3] == 6 && height[4] == 6 && height[5] == 6 && height[6] == 6) 
+			return 3;
+		
+		return 0;
 	}
+	int evaluate()
+	{	
+		int i = parent;
+		int j = height[parent];
+		
+		boolean player = false;
+		if (board[i][j]) player = true;
+		
+		int result = terminal(player);
+		if (result == 1) return 100;
+		else if (result == 2) return 0;
+		else if (result == 3) return 50;
+
+		int horizontal = count(i, j,  1, 0, player) + count(i, j, -1,  0, player) - 1;
+		int diagonal1  = count(i, j,  1, 1, player) + count(i, j, -1, -1, player) - 1;
+		int diagonal2  = count(i, j, -1, 1, player) + count(i, j,  1, -1, player) - 1;
+		int vertical   = count(i, j,  0, 1, player) + count(i, j,  0, -1, player) - 1;
+		
+		int twos   = 0;
+		int threes = 0;
+		
+		if (horizontal == 2) twos++;
+		else if (horizontal == 3) threes++;
+		if (diagonal1 == 2) twos++;
+		else if (diagonal1 == 3) threes++;
+		if (diagonal2 == 2) twos++;
+		else if (diagonal2 == 3) threes++;
+		if (vertical == 2) twos++;
+		else if (vertical == 3) threes++;
+		
+		twos *= 5;
+		threes *= 10;
+		
+		return twos + threes;
+	}
+	int count(int i, int j, int x, int y, boolean player) {
+		if (player) {
+			if (space(i, j) == 1) return 1 + count(i + x, j + y, x, y, player);
+			else return 0;
+		} else {
+			if (space(i, j) == 0) return 1 + count(i + x, j + y, x, y, player);
+			else return 0;
+		}
+	}
+	
 	int space(int i, int j) // returns -1 if empty or not on board, else 0 if false and 1 if true
 	{
 		if (i < 0 || i > 6 || j < 0 || j > 5) return -1;
@@ -220,7 +254,7 @@ public class State {
 			}
 		}*/
 		Scanner in = new Scanner(System.in);
-		State state = new State();
+		State state = new State(-1);
 		Random rand = new Random();
 		boolean player = true;
 		//state.print(player);
