@@ -1,4 +1,4 @@
-
+package pa2;
 import java.util.*;
 
 public class State {
@@ -169,8 +169,9 @@ public class State {
 	
 	int rate(int a, int b, int c, int d)
 	{
+		// Ağal Nilli
 		int count = 0;
-		int[] ratings = {0,1,3,10,1000};
+		int[] ratings = {0,1,5,30,1000};
 		if (a * b * c * d != 0)
 		{
 			// potential true

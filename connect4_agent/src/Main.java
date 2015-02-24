@@ -1,6 +1,6 @@
 import java.io.IOException;
 
-public class Main {
+public class Main1 {
 	
 	/**
 	 * starts the game player and waits for messages from the game master <br>
@@ -11,7 +11,7 @@ public class Main {
 			// TODO: put in your agent here
 			Agent agent = new Nilli();
 
-			int port=4001;
+			int port=4003;
 			if(args.length>=1){
 				port=Integer.parseInt(args[0]);
 			}

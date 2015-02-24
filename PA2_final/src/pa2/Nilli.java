@@ -1,5 +1,4 @@
-import java.util.Random;
-
+package pa2;
 //import aima.core.util.datastructure.Pair;
 import java.util.*;
 
@@ -121,6 +120,8 @@ public class Nilli implements Agent
 				}
 			}
 		}
+		if (bestScore == 0) System.out.println("I have lost");
+		if (bestScore == 1000) System.out.println("I have won");
 		return bestAction;
 	}
 
