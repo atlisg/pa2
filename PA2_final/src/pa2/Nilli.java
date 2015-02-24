@@ -121,7 +121,17 @@ public class Nilli implements Agent
 			}
 		}
 		if (bestScore == 0) System.out.println("I have lost");
-		if (bestScore == 1000) System.out.println("I have won");
+		if (bestScore == 1000) 
+		{
+			System.out.println("I have won");
+			if (state.nextState(bestAction, true).terminal() != 1)
+			{
+				for (int i = 0; i < 7; i++)
+				{
+					if (state.nextState(i, true).terminal() == 1) return i;
+				}
+			}
+		}
 		return bestAction;
 	}
 
