@@ -139,6 +139,7 @@ public class Nilli implements Agent
 		// depth limit
 		if (depth >= maxDepth) {/*System.out.println("deep enough");*/ return state.evaluate();}
 		int v = Integer.MIN_VALUE + 1;
+
 		for (int i = 0; i < 7; i++)
 		{
 			if (state.isValid(i))
@@ -233,7 +234,7 @@ public class Nilli implements Agent
 			System.out.println(nilli.nextAction(lastAction));
 			lastAction = in.nextInt();
 		}
-		
+
 		/*boolean[] pos = {true, true, false, false, false, true, true,
 						false, true, false, false, true, true, true,
 						false, true, false, false, true, true, true, 

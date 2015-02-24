@@ -108,6 +108,7 @@ public class State {
 	
 	public int terminal(boolean player) {
 		int i = parent;
+<<<<<<< HEAD
 		if (i < 0) return 0;
 		int j = height[parent] - 1;
 		// down
@@ -141,6 +142,8 @@ public class State {
 		}
 		
 		/*int i = parent;
+=======
+>>>>>>> a49eed711597aee359f5871320829b65c527b190
 		int j = height[parent];
 		
 		if (count(i, j,  1, 0, player) + count(i, j, -1,  0, player) - 1 == 4) {
@@ -158,13 +161,18 @@ public class State {
 		if (count(i, j,  0, 1, player) + count(i, j,  0, -1, player) - 1 == 4) {
 			if (player) return 1;
 			else return 2;
+<<<<<<< HEAD
 		}*/
+=======
+		}
+>>>>>>> a49eed711597aee359f5871320829b65c527b190
 		
 		if (height[0] == 6 && height[1] == 6 && height[2] == 6 && height[3] == 6 && height[4] == 6 && height[5] == 6 && height[6] == 6) 
 			return 3;
 		
 		return 0;
 	}
+<<<<<<< HEAD
 	
 	int rate(int a, int b, int c, int d)
 	{
@@ -269,6 +277,53 @@ public class State {
 		}
 	}
 	
+=======
+	int evaluate()
+	{	
+		int i = parent;
+		int j = height[parent];
+		
+		boolean player = false;
+		if (board[i][j]) player = true;
+		
+		int result = terminal(player);
+		if (result == 1) return 100;
+		else if (result == 2) return 0;
+		else if (result == 3) return 50;
+
+		int horizontal = count(i, j,  1, 0, player) + count(i, j, -1,  0, player) - 1;
+		int diagonal1  = count(i, j,  1, 1, player) + count(i, j, -1, -1, player) - 1;
+		int diagonal2  = count(i, j, -1, 1, player) + count(i, j,  1, -1, player) - 1;
+		int vertical   = count(i, j,  0, 1, player) + count(i, j,  0, -1, player) - 1;
+		
+		int twos   = 0;
+		int threes = 0;
+		
+		if (horizontal == 2) twos++;
+		else if (horizontal == 3) threes++;
+		if (diagonal1 == 2) twos++;
+		else if (diagonal1 == 3) threes++;
+		if (diagonal2 == 2) twos++;
+		else if (diagonal2 == 3) threes++;
+		if (vertical == 2) twos++;
+		else if (vertical == 3) threes++;
+		
+		twos *= 5;
+		threes *= 10;
+		
+		return twos + threes;
+	}
+	int count(int i, int j, int x, int y, boolean player) {
+		if (player) {
+			if (space(i, j) == 1) return 1 + count(i + x, j + y, x, y, player);
+			else return 0;
+		} else {
+			if (space(i, j) == 0) return 1 + count(i + x, j + y, x, y, player);
+			else return 0;
+		}
+	}
+	
+>>>>>>> a49eed711597aee359f5871320829b65c527b190
 	int space(int i, int j) // returns -1 if empty or not on board, else 0 if false and 1 if true
 	{
 		if (i < 0 || i > 6 || j < 0 || j > 5) return -1;
@@ -346,7 +401,11 @@ public class State {
 			}
 		}*/
 		Scanner in = new Scanner(System.in);
+<<<<<<< HEAD
 		State2 state = new State2(-1);
+=======
+		State state = new State(-1);
+>>>>>>> a49eed711597aee359f5871320829b65c527b190
 		Random rand = new Random();
 		boolean player = true;
 		//state.print(player);
