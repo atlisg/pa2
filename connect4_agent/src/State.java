@@ -3,19 +3,21 @@ import java.util.*;
 public class State {
 	boolean [][]board;
 	int[] height;
+	int parent;         // who the fuck just called for this state?
 	
-	public State()
+	public State(int parent)
 	{
 		board = new boolean[7][6];
 		height = new int[7];
 		for (int i = 0; i < 7; i++) height[i] = 0;
+		this.parent = parent;
 	}
 	// updates the board with move 'action' (0-index) from player 'player
 	public State nextState(int action, boolean player)
 	{
 		//System.out.println("player is " + player);
 		if (!isValid(action)) {System.out.println("action not valid"); return null;}
-		State next = new State();
+		State next = new State(action);
 		for (int i = 0; i < 7; i++)
 		{
 			for (int j = 0; j < height[i]; j++)
@@ -35,7 +37,6 @@ public class State {
 	
 	public int isTerminal()
 	{
-		if (height[0] == 6 && height[1] == 6 && height[2] == 6 && height[3] == 6 && height[4] == 6 && height[5] == 6 && height[6] == 6) return 3;
 		// vertical
 		for (int i = 0; i < 7; i++)
 		{
@@ -101,48 +102,173 @@ public class State {
 						if(height[i - 3] > j - 3 && value == board[i - 3][j - 3]) {/*System.out.println("diagonal-2 from " + i + " "+ j);*/return player;}
 			}
 		}
+		if (height[0] == 6 && height[1] == 6 && height[2] == 6 && height[3] == 6 && height[4] == 6 && height[5] == 6 && height[6] == 6) return 3;
 		return 0;
 	}
 	
-	int evaluate(String role)
+	public int terminal(boolean player) {
+		int i = parent;
+		if (i < 0) return 0;
+		int j = height[parent] - 1;
+		// down
+		if(space(i,j) == space(i,j-1) && space(i,j-1) == space(i,j-2) && space(i,j-2) == space(i,j-3))
+		{
+			if (space(i,j) == 1) return 1; else return 2;
+		}
+		if(space(i,j) == space(i-1,j-1) && space(i-1,j-1) == space(i-2,j-2) && space(i-2,j-2) == space(i-3,j-3))
+		{
+			if (space(i,j) == 1) return 1; else return 2;
+		}
+		if(space(i,j) == space(i+1,j-1) && space(i+1,j-1) == space(i+2,j-2) && space(i+2,j-2) == space(i+3,j-3))
+		{
+			if (space(i,j) == 1) return 1; else return 2;
+		}
+		if(space(i,j) == space(i+1,j) && space(i+1,j) == space(i+2,j) && space(i+2,j) == space(i+3,j))
+		{
+			if (space(i,j) == 1) return 1; else return 2;
+		}
+		if(space(i,j) == space(i-1,j) && space(i-1,j) == space(i-2,j) && space(i-2,j) == space(i-3,j))
+		{
+			if (space(i,j) == 1) return 1; else return 2;
+		}
+		if(space(i,j) == space(i+1,j+1) && space(i+1,j+1) == space(i+2,j+2) && space(i+2,j+2) == space(i+3,j+3))
+		{
+			if (space(i,j) == 1) return 1; else return 2;
+		}
+		if(space(i,j) == space(i-1,j-1) && space(i-1,j-1) == space(i-2,j-2) && space(i-2,j-2) == space(i-3,j-3))
+		{
+			if (space(i,j) == 1) return 1; else return 2;
+		}
+		
+		/*int i = parent;
+		int j = height[parent];
+		
+		if (count(i, j,  1, 0, player) + count(i, j, -1,  0, player) - 1 == 4) {
+			if (player) return 1;
+			else return 2;
+		}
+		if (count(i, j,  1, 1, player) + count(i, j, -1, -1, player) - 1 == 4) {
+			if (player) return 1;
+			else return 2;
+		}
+		if (count(i, j, -1, 1, player) + count(i, j,  1, -1, player) - 1 == 4) {
+			if (player) return 1;
+			else return 2;
+		}
+		if (count(i, j,  0, 1, player) + count(i, j,  0, -1, player) - 1 == 4) {
+			if (player) return 1;
+			else return 2;
+		}*/
+		
+		if (height[0] == 6 && height[1] == 6 && height[2] == 6 && height[3] == 6 && height[4] == 6 && height[5] == 6 && height[6] == 6) 
+			return 3;
+		
+		return 0;
+	}
+	
+	int rate(int a, int b, int c, int d)
 	{
-		int type1, type2, max1 = 0, max2 = 0, i1 = 0, i2 = 0;
+		int count = 0;
+		int[] ratings = {0,1,2,5,1000};
+		if (a * b * c * d != 0)
+		{
+			// potential true
+			if (a == 1) count++;
+			if (b == 1) count++;
+			if (c == 1) count++;
+			if (d == 1) count++;
+			return ratings[count];
+		}
+		else
+		{
+			// potential false;
+			if (a == 1 || b == 1 || c == 1 || d == 1) return 0;
+			if (a == 0) count++;
+			if (b == 0) count++; 
+			if (c == 0) count++; 
+			if (d == 0) count++; 
+			return -ratings[count];
+		}
+	}
+	
+	int rating()
+	{
+		int term = isTerminal();
+		if (term == 1) return 1000;
+		if (term == 2) return 0;
+		if (term == 3) return 500;
+		int sum = 0;
+		// vertical
 		for (int i = 0; i < 7; i++)
 		{
-			type1 = 0; type2 = 0;
-			if (height[i] < 5) {
-				int j = height[i];
-				
-				// count positive
-				if (space(i+1,j) == 1) type1++;
-				if (space(i+1,j+1) == 1) type1++;
-				if (space(i-1,j+1) == 1) type1++;
-				if (space(i-1,j) == 1) type1++;
-				if (space(i-1,j-1) == 1) type1++;
-				if (space(i,j-1) == 1) type1++;
-				if (space(i+1,j-1) == 1) type1++;
-				/*if (space(i+1,j) == 1 || space(i+1,j+1) == 1 || space(i+1,j-1) == 1 || space(i,j+1) == 1 ||
-						space(i,j-1) == 1 || space(i-1,j-1) == 1 || space(i-1,j) == 1 ||space(i-1,j+1) == 1) type1++;*/
-				// count negative
-				if (space(i+1,j) == 0) type2++;
-				if (space(i+1,j+1) == 0) type2++;
-				if (space(i-1,j+1) == 0) type2++;
-				if (space(i-1,j) == 0) type2++;
-				if (space(i-1,j-1) == 0) type2++;
-				if (space(i,j-1) == 0) type2++;
-				if (space(i+1,j-1) == 0) type2++;
-				/*if (space(i+1,j) == 0 || space(i+1,j+1) == 0 || space(i+1,j-1) == 0 || space(i,j+1) == 0 ||
-						space(i,j-1) == 0 || space(i-1,j-1) == 0 || space(i-1,j) == 0 ||space(i-1,j+1) == 0) type2++;*/
-			}
-			if (max1 < type1) i1 = i;
-			if (max2 < type2) i2 = i;
-			max1 = Math.max(max1, type1);
-			max2 = Math.max(max2, type2);
+			for (int j = 3; j < 6; j++) sum += rate(space(i,j), space(i,j-1), space(i,j-2), space(i,j-3));
 		}
-		System.out.println("max1: " + max1 + " max2: " + max2 + " i1: " + i1 + " i2: " + i2);
-		if (role.equals("WHITE")) return i2 + 1;
-		else return i1 + 1;
+		// horizontal
+		for (int i = 0; i < 4; i++)
+		{
+			for (int j = 0; j < 6; j++) sum += rate(space(i,j), space(i+1,j), space(i+2,j), space(i+3,j));
+		}
+		// vertical - down
+		for (int i = 0; i < 4; i++)
+		{
+			for (int j = 3; j < 6; j++) sum += rate(space(i,j), space(i+1,j-1), space(i+2,j-2), space(i+3,j-3));
+		}
+		// vertical - up
+		for (int i = 0; i < 4; i++)
+		{
+			for (int j = 0; j < 4; j++) sum += rate(space(i,j),space(i+1,j+1),space(i+2,j+2),space(i+3,j+3));
+		}
+		return sum + 500;
 	}
+	
+	int evaluate()
+	{	
+		//return heuristics();
+		return rating();
+		
+		/*int i = parent;					// last action taken
+		int j = height[parent] - 1;		// height of the most recently played piece
+		
+		boolean player = false;
+		if (board[i][j]) player = true;
+		
+		int result = terminal(player);
+		if (result == 1) return 100;
+		else if (result == 2) return 0;
+		else if (result == 3) return 50;
+
+		int horizontal = count(i, j,  1, 0, player) + count(i, j, -1,  0, player) - 1;
+		int diagonal1  = count(i, j,  1, 1, player) + count(i, j, -1, -1, player) - 1;
+		int diagonal2  = count(i, j, -1, 1, player) + count(i, j,  1, -1, player) - 1;
+		int vertical   = count(i, j,  0, 1, player) + count(i, j,  0, -1, player) - 1;
+		
+		int twos   = 0;
+		int threes = 0;
+		
+		if (horizontal == 2) twos++;
+		else if (horizontal == 3) threes++;
+		if (diagonal1 == 2) twos++;
+		else if (diagonal1 == 3) threes++;
+		if (diagonal2 == 2) twos++;
+		else if (diagonal2 == 3) threes++;
+		if (vertical == 2) twos++;
+		else if (vertical == 3) threes++;
+		
+		twos *= 5;
+		threes *= 10;
+		
+		return twos + threes;*/
+	}
+	int count(int i, int j, int x, int y, boolean player) {
+		if (player) {
+			if (space(i, j) == 1) return 1 + count(i + x, j + y, x, y, player);
+			else return 0;
+		} else {
+			if (space(i, j) == 0) return 1 + count(i + x, j + y, x, y, player);
+			else return 0;
+		}
+	}
+	
 	int space(int i, int j) // returns -1 if empty or not on board, else 0 if false and 1 if true
 	{
 		if (i < 0 || i > 6 || j < 0 || j > 5) return -1;
@@ -176,9 +302,9 @@ public class State {
 	{
 		int result = isTerminal();
 		//if(result > 0) {System.out.println("is terminal ???"); print(true);}
-		if (result == 1) return 100;
+		if (result == 1) return 1000;
 		else if (result == 2) return 0;
-		else if (result == 3) return 50;
+		else if (result == 3) return 500;
 		int type1 = 0, type2 = 0;
 		for (int i = 0; i < 7; i++)
 		{
@@ -198,7 +324,7 @@ public class State {
 				}
 			}
 		}
-		return 50 + type1 - type2;
+		return 500 + type1 - type2;
 	}
 	
 	public static void main(String[] args)
@@ -220,7 +346,7 @@ public class State {
 			}
 		}*/
 		Scanner in = new Scanner(System.in);
-		State state = new State();
+		State2 state = new State2(-1);
 		Random rand = new Random();
 		boolean player = true;
 		//state.print(player);

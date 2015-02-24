@@ -1,6 +1,7 @@
 import java.util.Random;
 
 //import aima.core.util.datastructure.Pair;
+import java.util.*;
 
 public class Nilli implements Agent
 {
@@ -13,7 +14,7 @@ public class Nilli implements Agent
 	static int maxDepth = 12;
 	static int nodes = 0;
 	
-	State currentState;
+	static State currentState;
 	
 //	static public class TimeLimitException extends Exception {}
 	
@@ -22,13 +23,13 @@ public class Nilli implements Agent
 		this.role = role;
 		this.playclock = playclock;
 		myTurn = !role.equals("WHITE");
-		System.out.println(role);
+		System.out.println(role + " " + playclock);
 		
 		// TODO: add your own initialization code here
 		//board = new boolean [7][6];
 		//height = new int[7];
 		//for (int i = 0; i < 7; i++)	height[i] = 0;
-		currentState = new State();
+		currentState = new State(-1);
 	}
 	
 	
@@ -43,14 +44,15 @@ public class Nilli implements Agent
 			else currentState = currentState.nextState(lastDrop - 1, false);
 		}
 		currentState.print(myTurn);
+		System.out.println("RATING: " + currentState.rating());
 		myTurn = !myTurn;
 		// TODO: 2. run alpha-beta search to determine the best move
 		
 		if (myTurn) {
-			/*if (lastDrop == 0) move = 4;
-			else move = currentState.evaluate(role);*/
-			//move = AlphaBetaSearch(currentState) + 1;
-			move = find_move(System.currentTimeMillis() + playclock * 1000) + 1;
+			if (lastDrop == 0) move = 4;
+			//else move = currentState.evaluate(role);
+			//else move = AlphaBetaSearch(currentState, 20) + 1;
+			else move = find_move(System.currentTimeMillis() + playclock * 1000) + 1;
 			return "(Drop " + move + ")";
 		} else {
 			return "NOOP";
@@ -67,7 +69,7 @@ public class Nilli implements Agent
 		if (state.isTerminal() > 0) {System.out.println("terminal");return state.heuristics();}
 		// depth limit
 		if (depth >= maxDepth) {System.out.println("deep enough"); return state.heuristics();}
-		int v = Integer.MIN_VALUE;
+		int v = Integer.MIN_VALUE + 1;
 		for (int i = 0; i < 7; i++)
 		{
 			if (state.isValid(i))
@@ -104,7 +106,7 @@ public class Nilli implements Agent
 	{
 		int depth = 0;
 		int bestAction = -1;
-		int bestScore = Integer.MIN_VALUE;
+		int bestScore = Integer.MIN_VALUE + 1;
 		for (int i = 0; i < 7; i++)
 		{
 			if (state.isValid(i))
@@ -125,17 +127,18 @@ public class Nilli implements Agent
 	
 	
 	
-	static public int AlphaBetaMaxValue(State state, boolean thisRole, int depth, int alpha, int beta, long timeLimit) throws Exception
+	static public int AlphaBetaMaxValue(State state, boolean thisRole, int depth, int alpha, int beta, long timeLimit) throws TimeOutException
 	{
 		nodes++;
-		if (timeLimit - System.currentTimeMillis() < 100) throw new Exception();
+		//System.out.println("Nilli2 - maxValue, time: " + System.currentTimeMillis());
+		if (timeLimit - System.currentTimeMillis() < 100) throw new TimeOutException("Out of time");
 		//System.out.println("\t\t\t" + depth);
 		//System.out.println("max val, player is " + thisRole);
 		//state.print(true);
-		if (state.isTerminal() > 0) {/*System.out.println("terminal");*/return state.heuristics();}
+		if (state.terminal(thisRole) > 0) {/*System.out.println("terminal");*/return state.evaluate();}
 		// depth limit
-		if (depth >= maxDepth) {/*System.out.println("deep enough");*/ return state.heuristics();}
-		int v = Integer.MIN_VALUE;
+		if (depth >= maxDepth) {/*System.out.println("deep enough");*/ return state.evaluate();}
+		int v = Integer.MIN_VALUE + 1;
 		for (int i = 0; i < 7; i++)
 		{
 			if (state.isValid(i))
@@ -148,15 +151,16 @@ public class Nilli implements Agent
 		//System.out.println("value " + v);
 		return v;
 	}
-	static public int AlphaBetaMinValue(State state, boolean thisRole, int depth, int alpha, int beta, long timeLimit) throws Exception
+	static public int AlphaBetaMinValue(State state, boolean thisRole, int depth, int alpha, int beta, long timeLimit) throws TimeOutException
 	{
 		nodes++;
+		//System.out.println("Nilli2 - minValue, time: " + System.currentTimeMillis());
 		//System.out.println("\t\t\t" + depth);
 		//System.out.println("min val, player is " + thisRole);
 		//state.print(false);
-		if (state.isTerminal() > 0) {/*System.out.println("terminal");*/ return state.heuristics();}
+		if (state.terminal(thisRole) > 0) {/*System.out.println("terminal");*/ return state.evaluate();}
 		// depth limit
-		if (depth >= maxDepth) {/*System.out.println("deep enough");*/ return state.heuristics();}
+		if (depth >= maxDepth) {/*System.out.println("deep enough");*/ return state.evaluate();}
 		int v = Integer.MAX_VALUE;
 		for (int i = 0; i < 7; i++)
 		{
@@ -171,17 +175,17 @@ public class Nilli implements Agent
 		return v;
 	}
 	
-	static public int AlphaBetaSearch(State state, long timeLimit) throws Exception
+	static public int AlphaBetaSearch(State state, long timeLimit) throws TimeOutException
 	{
 		int depth = 0;
 		int bestAction = -1;
-		int bestScore = Integer.MIN_VALUE;
+		int bestScore = Integer.MIN_VALUE + 1;
 		for (int i = 0; i < 7; i++)
 		{
 			if (state.isValid(i))
 			{
 				State next = state.nextState(i, true);
-				int score = AlphaBetaMinValue(next, false, depth + 1, Integer.MIN_VALUE, Integer.MAX_VALUE, timeLimit);
+				int score = AlphaBetaMinValue(next, false, depth + 1, Integer.MIN_VALUE + 1, Integer.MAX_VALUE, timeLimit);
 				//System.out.println("action " + i + " score " + score);
 				if ((score > bestScore) || (score == bestScore && random.nextBoolean()))
 				{
@@ -201,22 +205,35 @@ public class Nilli implements Agent
 		while(true)
 		{
 			// try to run search
+			//System.out.println("depth: " + maxDepth + "\t time: " + System.currentTimeMillis() + " \t limit: " + timeLimit);
 			try 
 			{
 				bestMove = AlphaBetaSearch(currentState, timeLimit);
 			} 
-			catch (Exception t)
+			catch (TimeOutException t)
 			{
-				System.out.println("out of time, depth " + maxDepth);
+				System.out.println("Nilli2: out of time, depth " + maxDepth + "\t time " + System.currentTimeMillis());
 				return bestMove;
 			}
 			maxDepth += 2;
+			if (maxDepth > 42) return bestMove;
 		}
 	}
 	
 	static public void main(String[] args)
 	{
-		State state = new State();
+		//State2 state = new State2(-1);
+		
+		Nilli nilli = new Nilli();
+		nilli.init("WHITE", 5);
+		int lastAction = 0;
+		Scanner in = new Scanner(System.in);
+		while(true)
+		{
+			System.out.println(nilli.nextAction(lastAction));
+			lastAction = in.nextInt();
+		}
+		
 		/*boolean[] pos = {true, true, false, false, false, true, true,
 						false, true, false, false, true, true, true,
 						false, true, false, false, true, true, true, 
@@ -238,7 +255,7 @@ public class Nilli implements Agent
 				true, true, true, false, true, false, true,
 				false, true, true, true, false, true, false};*/
 		//int[] heights = {4,5,4,5,3,6,6};
-		boolean[] pos = {false, false, false, false, false, false, true, 
+		/*boolean[] pos = {false, false, false, false, false, false, true, 
 						false, false, false, false, false, false, false, 
 						false, true, false, true , true, true, false,
 						false, false, false, false, true, false, true, 
@@ -256,7 +273,7 @@ public class Nilli implements Agent
 		//System.out.println(minimaxDecision(state));
 		//System.out.println(AlphaBetaSearch(state, ));
 		state.print(true);
-		System.out.println("nodes: " + nodes);
+		System.out.println("nodes: " + nodes);*/
 	}
 	
 	/*
@@ -282,7 +299,3 @@ public class Nilli implements Agent
 		
 	}*/
 }
-
-
-
-
