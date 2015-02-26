@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <project name="ARTI-lab1" basedir="." default="help">
 
-	<property name="student" value="Jon Jonsson" />
+	<property name="student" value="NerdsMaSkapeGerds" />
 	<property name="mainclass" value="Main" />
 
-	<property name="lab" value="1" />
+	<property name="lab" value="Nilli" />
 
 	<property name="src" value="src"/>
 	<property name="build" value="build"/>
 	<property name="dist" value="dist"/>
 	<property name="dist.lib" value="${dist}/lib/"/>
-	<property name="projectname" value="${student}_lab${lab}" />
+	<property name="projectname" value="${student}_${lab}" />
 	<property name="finaljarfile" value="${build}/${projectname}.jar" />
 
 	<path id="defaultclasspath">

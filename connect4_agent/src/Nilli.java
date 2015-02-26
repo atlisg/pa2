@@ -1,5 +1,3 @@
-import java.util.Random;
-
 //import aima.core.util.datastructure.Pair;
 import java.util.*;
 
@@ -183,7 +181,7 @@ public class Nilli implements Agent
 		}
 	}
 	
-	static public void main(String[] args)
+/*	static public void main(String[] args)
 	{
 		Nilli nilli = new Nilli();
 		nilli.init("WHITE", 5);
@@ -194,5 +192,5 @@ public class Nilli implements Agent
 			System.out.println(nilli.nextAction(lastAction));
 			lastAction = in.nextInt();
 		}
-	}
+	}*/
 }

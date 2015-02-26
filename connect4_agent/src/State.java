@@ -1,4 +1,3 @@
-
 import java.util.*;
 
 public class State {
@@ -107,40 +106,110 @@ public class State {
 		return 0;
 	}
 	
-	public int terminal() {
+	/*public int terminal() {
 		int i = parent;
 		if (i < 0) return 0;
 		int j = height[parent] - 1;
-/*		// down
+		// down
 		if(space(i,j) == space(i,j-1) && space(i,j-1) == space(i,j-2) && space(i,j-2) == space(i,j-3))
 		{
 			if (space(i,j) == 1) return 1; else return 2;
 		}
+		// diagonal-up-1
 		if(space(i,j) == space(i-1,j-1) && space(i-1,j-1) == space(i-2,j-2) && space(i-2,j-2) == space(i-3,j-3))
 		{
 			if (space(i,j) == 1) return 1; else return 2;
 		}
-		if(space(i,j) == space(i+1,j-1) && space(i+1,j-1) == space(i+2,j-2) && space(i+2,j-2) == space(i+3,j-3))
+		// diagonal-up-2
+		if(space(i+1,j+1) == space(i,j) && space(i,j) == space(i-1,j-1) && space(i-1,j-1) == space(i-2,j-2))
 		{
 			if (space(i,j) == 1) return 1; else return 2;
 		}
-		if(space(i,j) == space(i+1,j) && space(i+1,j) == space(i+2,j) && space(i+2,j) == space(i+3,j))
+		// diagonal-up-1
+		if(space(i+2,j+2) == space(i+1,j+1) && space(i+1,j+1) == space(i,j) && space(i,j) == space(i-1,j-1))
 		{
 			if (space(i,j) == 1) return 1; else return 2;
 		}
-		if(space(i,j) == space(i-1,j) && space(i-1,j) == space(i-2,j) && space(i-2,j) == space(i-3,j))
-		{
-			if (space(i,j) == 1) return 1; else return 2;
-		}
+		// diagonal-up-4
 		if(space(i,j) == space(i+1,j+1) && space(i+1,j+1) == space(i+2,j+2) && space(i+2,j+2) == space(i+3,j+3))
 		{
 			if (space(i,j) == 1) return 1; else return 2;
 		}
+		
+		// diagonal-down-1
+		if(space(i,j) == space(i+1,j-1) && space(i+1,j-1) == space(i+2,j-2) && space(i+2,j-2) == space(i+3,j-3))
+		{
+			if (space(i,j) == 1) return 1; else return 2;
+		}
+		// diagonal-down-2
+		if(space(i-1,j+1) == space(i,j) && space(i,j) == space(i+1,j-1) && space(i+1,j-1) == space(i+2,j-2))
+		{
+			if (space(i,j) == 1) return 1; else return 2;
+		}
+		// diagonal-down-3
+		if(space(i-2,j+2) == space(i-1,j+1) && space(i-1,j+1) == space(i,j) && space(i,j) == space(i+1,j-1))
+		{
+			if (space(i,j) == 1) return 1; else return 2;
+		}
+		// diagonal-down-4
 		if(space(i,j) == space(i-1,j-1) && space(i-1,j-1) == space(i-2,j-2) && space(i-2,j-2) == space(i-3,j-3))
 		{
 			if (space(i,j) == 1) return 1; else return 2;
 		}
-*/
+		// horizontal - 1
+		if(space(i,j) == space(i+1,j) && space(i+1,j) == space(i+2,j) && space(i+2,j) == space(i+3,j))
+		{
+			if (space(i,j) == 1) return 1; else return 2;
+		}
+		// horizontal - 2
+		if(space(i-1,j) == space(i,j) && space(i,j) == space(i+1,j) && space(i+1,j) == space(i+2,j))
+		{
+			if (space(i,j) == 1) return 1; else return 2;
+		}
+		// horizontal - 3
+		if(space(i-2,j) == space(i-1,j) && space(i-1,j) == space(i,j) && space(i,j) == space(i+1,j))
+		{
+			if (space(i,j) == 1) return 1; else return 2;
+		}
+		// horizontal - 4
+		if(space(i,j) == space(i-1,j) && space(i-1,j) == space(i-2,j) && space(i-2,j) == space(i-3,j))
+		{
+			if (space(i,j) == 1) return 1; else return 2;
+		}
+		
+		
+		
+		/*int i = parent;
+		int j = height[parent];
+		
+		if (count(i, j,  1, 0, player) + count(i, j, -1,  0, player) - 1 == 4) {
+			if (player) return 1;
+			else return 2;
+		}
+		if (count(i, j,  1, 1, player) + count(i, j, -1, -1, player) - 1 == 4) {
+			if (player) return 1;
+			else return 2;
+		}
+		if (count(i, j, -1, 1, player) + count(i, j,  1, -1, player) - 1 == 4) {
+			if (player) return 1;
+			else return 2;
+		}
+		if (count(i, j,  0, 1, player) + count(i, j,  0, -1, player) - 1 == 4) {
+			if (player) return 1;
+			else return 2;
+		}*/
+		
+		/*if (height[0] == 6 && height[1] == 6 && height[2] == 6 && height[3] == 6 && height[4] == 6 && height[5] == 6 && height[6] == 6) 
+			return 3;
+		
+		return 0;
+	}*/
+	
+	public int terminal() {
+		int i = parent;
+		if (i < 0) return 0;
+		int j = height[parent] - 1;
+
 		boolean player = board[i][j];
 		// horizontal
 		if (count(i, j,  1, 0, player) + count(i, j, -1,  0, player) - 1 >= 4) {
@@ -171,8 +240,9 @@ public class State {
 	
 	int rate(int a, int b, int c, int d)
 	{
+		// Adal Nilli - 4003
 		int count = 0;
-		int[] ratings = {0,1,15,40,1000};
+		int[] ratings = {0,1,20,40,1000};
 		if (a * b * c * d != 0)
 		{
 			// potential true
@@ -303,7 +373,7 @@ public class State {
 	}
 	int heuristics()
 	{
-		int result = isTerminal();
+		int result = terminal();
 		//if(result > 0) {System.out.println("is terminal ???"); print(true);}
 		if (result == 1) return 1000;
 		else if (result == 2) return 0;
@@ -330,13 +400,13 @@ public class State {
 		return 500 + type1 - type2;
 	}
 	
-	public static void main(String[] args)
+/*	public static void main(String[] args)
 	{
 		//State state = new State();
 		//boolean player = true;
 		//int[] moves = {0,1,1,2,2,3,2,3,3,6,3,3};
 		//int[] moves = {0,0,0,0,0,1,1,1,1,5,2,2,2,2,};
-		/*state.print(true);
+		state.print(true);
 		for (int i = 0; i < moves.length; i++)
 		{
 			state = state.nextState(moves[i], player);
@@ -347,7 +417,7 @@ public class State {
 				System.out.println("Terminal state");
 				break;
 			}
-		}*/
+		}
 		Scanner in = new Scanner(System.in);
 		State state = new State(-1);
 		Random rand = new Random();
@@ -364,5 +434,5 @@ public class State {
 			in.next();
 		}
 		in.close();
-	}
+	}*/
 }
