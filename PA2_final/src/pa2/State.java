@@ -116,30 +116,69 @@ public class State {
 		{
 			if (space(i,j) == 1) return 1; else return 2;
 		}
+		// diagonal-up-1
 		if(space(i,j) == space(i-1,j-1) && space(i-1,j-1) == space(i-2,j-2) && space(i-2,j-2) == space(i-3,j-3))
 		{
 			if (space(i,j) == 1) return 1; else return 2;
 		}
-		if(space(i,j) == space(i+1,j-1) && space(i+1,j-1) == space(i+2,j-2) && space(i+2,j-2) == space(i+3,j-3))
+		// diagonal-up-2
+		if(space(i+1,j+1) == space(i,j) && space(i,j) == space(i-1,j-1) && space(i-1,j-1) == space(i-2,j-2))
 		{
 			if (space(i,j) == 1) return 1; else return 2;
 		}
-		if(space(i,j) == space(i+1,j) && space(i+1,j) == space(i+2,j) && space(i+2,j) == space(i+3,j))
+		// diagonal-up-1
+		if(space(i+2,j+2) == space(i+1,j+1) && space(i+1,j+1) == space(i,j) && space(i,j) == space(i-1,j-1))
 		{
 			if (space(i,j) == 1) return 1; else return 2;
 		}
-		if(space(i,j) == space(i-1,j) && space(i-1,j) == space(i-2,j) && space(i-2,j) == space(i-3,j))
-		{
-			if (space(i,j) == 1) return 1; else return 2;
-		}
+		// diagonal-up-4
 		if(space(i,j) == space(i+1,j+1) && space(i+1,j+1) == space(i+2,j+2) && space(i+2,j+2) == space(i+3,j+3))
 		{
 			if (space(i,j) == 1) return 1; else return 2;
 		}
+		
+		// diagonal-down-1
+		if(space(i,j) == space(i+1,j-1) && space(i+1,j-1) == space(i+2,j-2) && space(i+2,j-2) == space(i+3,j-3))
+		{
+			if (space(i,j) == 1) return 1; else return 2;
+		}
+		// diagonal-down-2
+		if(space(i-1,j+1) == space(i,j) && space(i,j) == space(i+1,j-1) && space(i+1,j-1) == space(i+2,j-2))
+		{
+			if (space(i,j) == 1) return 1; else return 2;
+		}
+		// diagonal-down-3
+		if(space(i-2,j+2) == space(i-1,j+1) && space(i-1,j+1) == space(i,j) && space(i,j) == space(i+1,j-1))
+		{
+			if (space(i,j) == 1) return 1; else return 2;
+		}
+		// diagonal-down-4
 		if(space(i,j) == space(i-1,j-1) && space(i-1,j-1) == space(i-2,j-2) && space(i-2,j-2) == space(i-3,j-3))
 		{
 			if (space(i,j) == 1) return 1; else return 2;
 		}
+		// horizontal - 1
+		if(space(i,j) == space(i+1,j) && space(i+1,j) == space(i+2,j) && space(i+2,j) == space(i+3,j))
+		{
+			if (space(i,j) == 1) return 1; else return 2;
+		}
+		// horizontal - 2
+		if(space(i-1,j) == space(i,j) && space(i,j) == space(i+1,j) && space(i+1,j) == space(i+2,j))
+		{
+			if (space(i,j) == 1) return 1; else return 2;
+		}
+		// horizontal - 3
+		if(space(i-2,j) == space(i-1,j) && space(i-1,j) == space(i,j) && space(i,j) == space(i+1,j))
+		{
+			if (space(i,j) == 1) return 1; else return 2;
+		}
+		// horizontal - 4
+		if(space(i,j) == space(i-1,j) && space(i-1,j) == space(i-2,j) && space(i-2,j) == space(i-3,j))
+		{
+			if (space(i,j) == 1) return 1; else return 2;
+		}
+		
+		
 		
 		/*int i = parent;
 		int j = height[parent];
@@ -169,9 +208,9 @@ public class State {
 	
 	int rate(int a, int b, int c, int d)
 	{
-		// Aðal Nilli
+		// Aðal Nilli - 4003
 		int count = 0;
-		int[] ratings = {0,1,5,30,1000};
+		int[] ratings = {0,1,20,40,1000};
 		if (a * b * c * d != 0)
 		{
 			// potential true
