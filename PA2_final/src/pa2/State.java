@@ -107,7 +107,7 @@ public class State {
 		return 0;
 	}
 	
-	public int terminal() {
+	/*public int terminal() {
 		int i = parent;
 		if (i < 0) return 0;
 		int j = height[parent] - 1;
@@ -199,6 +199,39 @@ public class State {
 			if (player) return 1;
 			else return 2;
 		}*/
+		
+		/*if (height[0] == 6 && height[1] == 6 && height[2] == 6 && height[3] == 6 && height[4] == 6 && height[5] == 6 && height[6] == 6) 
+			return 3;
+		
+		return 0;
+	}*/
+	
+	public int terminal() {
+		int i = parent;
+		if (i < 0) return 0;
+		int j = height[parent] - 1;
+
+		boolean player = board[i][j];
+		// horizontal
+		if (count(i, j,  1, 0, player) + count(i, j, -1,  0, player) - 1 == 4) {
+			if (player) return 1;
+			else return 2;
+		}
+		// diagonal upwards left to right
+		if (count(i, j,  1, 1, player) + count(i, j, -1, -1, player) - 1 == 4) {
+			if (player) return 1;
+			else return 2;
+		}
+		// diagonal downwards left to right
+		if (count(i, j, -1, 1, player) + count(i, j,  1, -1, player) - 1 == 4) {
+			if (player) return 1;
+			else return 2;
+		}
+		// vertical
+		if (count(i, j,  0, -1, player) == 4) {
+			if (player) return 1;
+			else return 2;
+		}
 		
 		if (height[0] == 6 && height[1] == 6 && height[2] == 6 && height[3] == 6 && height[4] == 6 && height[5] == 6 && height[6] == 6) 
 			return 3;
