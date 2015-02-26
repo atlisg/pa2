@@ -140,10 +140,7 @@ public class State {
 		{
 			if (space(i,j) == 1) return 1; else return 2;
 		}
-		
-		/*int i = parent;
-		int j = height[parent];
-		
+/*		boolean player = board[i][j];
 		if (count(i, j,  1, 0, player) + count(i, j, -1,  0, player) - 1 == 4) {
 			if (player) return 1;
 			else return 2;
@@ -159,18 +156,18 @@ public class State {
 		if (count(i, j,  0, 1, player) + count(i, j,  0, -1, player) - 1 == 4) {
 			if (player) return 1;
 			else return 2;
-		}*/
+		}
 		
 		if (height[0] == 6 && height[1] == 6 && height[2] == 6 && height[3] == 6 && height[4] == 6 && height[5] == 6 && height[6] == 6) 
 			return 3;
-		
+*/		
 		return 0;
 	}
 	
 	int rate(int a, int b, int c, int d)
 	{
 		int count = 0;
-		int[] ratings = {0,1,3,10,1000};
+		int[] ratings = {0,1,20,100,1000};
 		if (a * b * c * d != 0)
 		{
 			// potential true
