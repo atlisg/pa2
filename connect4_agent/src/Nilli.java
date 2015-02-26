@@ -121,6 +121,44 @@ public class Nilli implements Agent
 				}
 			}
 		}
+		if (bestScore == 0) 
+		{
+			System.out.println("I have lost?");
+			for (int i = 0; i < 7; i++)
+			{
+				if (state.isValid(i))
+				{
+					boolean losingMove = false;
+					State tempState = state.nextState(i, true);
+					for(int j = 0; j < 7 && !losingMove; j++)
+					{
+						if (tempState.isValid(j) && tempState.nextState(j, false).terminal() == 2) losingMove = true;
+					}
+					if (!losingMove) return i;
+				}
+			}
+		}
+		if (bestScore == 1000) 
+		{
+			System.out.println("I have won");
+			if (state.nextState(bestAction, true).terminal() != 1)
+			{
+				for (int i = 0; i < 7; i++)
+				{
+					System.out.println("check " + i);
+					if (state.isValid(i))
+					{
+						System.out.println(i + " is valid");
+						State tempState = state.nextState(i,  true);
+						if (tempState.terminal() == 1)
+						{
+							System.out.println(i + " wins");
+							return i;
+						}
+					}
+				}
+			}
+		}
 		return bestAction;
 	}
 
