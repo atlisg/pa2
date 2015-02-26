@@ -213,22 +213,22 @@ public class State {
 
 		boolean player = board[i][j];
 		// horizontal
-		if (count(i, j,  1, 0, player) + count(i, j, -1,  0, player) - 1 == 4) {
+		if (count(i, j,  1, 0, player) + count(i, j, -1,  0, player) - 1 >= 4) {
 			if (player) return 1;
 			else return 2;
 		}
 		// diagonal upwards left to right
-		if (count(i, j,  1, 1, player) + count(i, j, -1, -1, player) - 1 == 4) {
+		if (count(i, j,  1, 1, player) + count(i, j, -1, -1, player) - 1 >= 4) {
 			if (player) return 1;
 			else return 2;
 		}
 		// diagonal downwards left to right
-		if (count(i, j, -1, 1, player) + count(i, j,  1, -1, player) - 1 == 4) {
+		if (count(i, j, -1, 1, player) + count(i, j,  1, -1, player) - 1 >= 4) {
 			if (player) return 1;
 			else return 2;
 		}
 		// vertical
-		if (count(i, j,  0, -1, player) == 4) {
+		if (count(i, j,  0, -1, player) >= 4) {
 			if (player) return 1;
 			else return 2;
 		}
