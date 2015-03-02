@@ -1,5 +1,5 @@
 # Nilli plays Connect 4
-##### Programming Assignment 2 in Artificial Intelligence
+Programming Assignment 2 in Artificial Intelligence
 ### Dependencies
 * Java SDK
 
