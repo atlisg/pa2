@@ -19,7 +19,6 @@ public class Nilli implements Agent
 		this.role = role;
 		this.playclock = playclock;
 		myTurn = !role.equals("WHITE");
-		System.out.println(role + " " + playclock);
 
 		currentState = new State(-1);
 	}
@@ -28,7 +27,6 @@ public class Nilli implements Agent
 	// lastDrop is 0 for the first call of nextAction (no action has been executed),
 	// otherwise it is a number n with 0<n<8 indicating the column that the last piece was dropped in by the player whose turn it was
 	public String nextAction(int lastDrop) { 
-		// TODO: 1. update your internal world model according to the action that was just executed
 		int move = 0;
 		if (lastDrop > 0)
 		{
@@ -36,14 +34,12 @@ public class Nilli implements Agent
 			if (myTurn) currentState = currentState.nextState(lastDrop - 1, true);
 			else currentState = currentState.nextState(lastDrop - 1, false);
 		}
-		// printing and updating the turn
-		currentState.print(myTurn);
-		System.out.println("RATING: " + currentState.rating());
+		// updating the turn
 		myTurn = !myTurn;
 		
 		if (myTurn) 
 		{
-			// first move is hardcoded, since we know it is the best
+			// first move is hard coded, since we know it is the best
 			if (lastDrop == 0) move = 4;
 			else move = find_move(System.currentTimeMillis() + playclock * 1000) + 1;
 			return "(Drop " + move + ")";
@@ -111,7 +107,6 @@ public class Nilli implements Agent
 			{
 				State next = state.nextState(i, true);
 				int score = AlphaBetaMinValue(next, false, depth + 1, Integer.MIN_VALUE + 1, Integer.MAX_VALUE, timeLimit);
-				//System.out.println("action " + i + " score " + score);
 				if ((score > bestScore) || (score == bestScore && random.nextBoolean()))
 				{
 					bestAction = i;
@@ -119,9 +114,11 @@ public class Nilli implements Agent
 				}
 			}
 		}
+		// To ensure that we pick the winning move when available and to
+		// delay loss as long as possible, we re-examine the moves and 
+		// choose the one that wins or prevents a loss, if possible
 		if (bestScore == 0) 
 		{
-			System.out.println("I have lost?");
 			for (int i = 0; i < 7; i++)
 			{
 				if (state.isValid(i))
@@ -138,19 +135,15 @@ public class Nilli implements Agent
 		}
 		if (bestScore == 1000) 
 		{
-			System.out.println("I have won");
 			if (state.nextState(bestAction, true).terminal() != 1)
 			{
 				for (int i = 0; i < 7; i++)
 				{
-					System.out.println("check " + i);
 					if (state.isValid(i))
 					{
-						System.out.println(i + " is valid");
 						State tempState = state.nextState(i,  true);
 						if (tempState.terminal() == 1)
 						{
-							System.out.println(i + " wins");
 							return i;
 						}
 					}
@@ -162,35 +155,25 @@ public class Nilli implements Agent
 
 	public int find_move(long timeLimit)
 	{
+		// we keep track of the best move we have found, search further, and update it
+		// if we find a better one
 		int bestMove = -1;
 		maxDepth = 2;
 		while(true)
 		{
 			// try to run search
+			nodes = 0;
 			try 
 			{
 				bestMove = AlphaBetaSearch(currentState, timeLimit);
 			}
 			catch (TimeOutException t)
 			{
-				System.out.println("Nilli2: out of time, depth " + maxDepth + "\t time " + System.currentTimeMillis());
 				return bestMove;
 			}
 			maxDepth += 2;
+			// if we have searched to the end, we stop
 			if (maxDepth > 42) return bestMove;
 		}
 	}
-	
-/*	static public void main(String[] args)
-	{
-		Nilli nilli = new Nilli();
-		nilli.init("WHITE", 5);
-		int lastAction = 0;
-		Scanner in = new Scanner(System.in);
-		while(true)
-		{
-			System.out.println(nilli.nextAction(lastAction));
-			lastAction = in.nextInt();
-		}
-	}*/
 }

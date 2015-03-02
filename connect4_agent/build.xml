@@ -73,6 +73,7 @@ if you need -Xlint=unchecked (in target build) or -Xmx500m (in target run), unco
 	</target>
 	<target name="run" depends="dist">
 		<java jar="${dist}/${projectname}.jar" fork="true">
+			<arg value="${arg0}"/>
 			<jvmarg value="-Xmx500m" />
 		</java>	
 		<antcall target="clean" />
